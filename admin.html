@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShopNest — Admin Panel</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Image Upload Zone ── */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--warm-white);
+      padding: 1.8rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color var(--transition), background var(--transition);
+      position: relative;
+    }
+    .upload-zone:hover,
+    .upload-zone.drag-over {
+      border-color: var(--accent);
+      background: rgba(200,149,108,.05);
+    }
+    .upload-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+    .upload-icon { color: var(--muted); margin-bottom: .5rem; }
+    .upload-label {
+      font-size: .9rem;
+      color: var(--muted);
+      pointer-events: none;
+    }
+    .upload-label span {
+      color: var(--accent-dark);
+      font-weight: 600;
+    }
+    .upload-hint {
+      font-size: .78rem;
+      color: var(--muted);
+      margin-top: .25rem;
+      pointer-events: none;
+    }
+
+    /* ── Image Preview ── */
+    .image-preview-wrap {
+      display: none;
+      align-items: center;
+      gap: 1rem;
+      margin-top: .85rem;
+      padding: .75rem;
+      background: var(--warm-white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+    .image-preview-wrap.visible { display: flex; }
+    .image-preview-wrap img {
+      width: 64px;
+      height: 64px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .image-preview-info { flex: 1; min-width: 0; }
+    .image-preview-name {
+      font-size: .88rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .image-preview-size { font-size: .78rem; color: var(--muted); }
+    .btn-remove-img {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--danger);
+      padding: .25rem;
+      border-radius: 4px;
+      transition: background var(--transition);
+      flex-shrink: 0;
+    }
+    .btn-remove-img:hover { background: rgba(224,92,92,.1); }
+
+    /* ── Progress Bar ── */
+    .progress-wrap {
+      display: none;
+      margin-top: .75rem;
+    }
+    .progress-wrap.visible { display: block; }
+    .progress-bar-bg {
+      background: var(--border);
+      border-radius: 50px;
+      height: 6px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 50px;
+      width: 0%;
+      transition: width .2s ease;
+    }
+    .progress-text {
+      font-size: .78rem;
+      color: var(--muted);
+      margin-top: .3rem;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ NAVBAR ══ -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="nav-brand">Shop<span>Nest</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="admin.html" class="active">Admin Panel</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ══ ADMIN WRAPPER ══ -->
+  <main class="admin-wrapper">
+    <h1 class="admin-title">Admin Panel</h1>
+    <p class="admin-subtitle">Manage your store products and account.</p>
+
+    <!-- ══ A) AUTH CARD ══ -->
+    <div class="card" id="auth-card">
+      <h2 class="card-title">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+        </svg>
+        Account Access
+      </h2>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login"  onclick="switchTab('login')">Login</button>
+        <button class="auth-tab"        id="tab-signup" onclick="switchTab('signup')">Sign Up</button>
+      </div>
+
+      <div class="form-group">
+        <label for="auth-email">Email Address</label>
+        <input type="email" id="auth-email" placeholder="you@example.com" autocomplete="email" />
+      </div>
+      <div class="form-group">
+        <label for="auth-password">Password</label>
+        <input type="password" id="auth-password" placeholder="••••••••" autocomplete="current-password" />
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-primary" id="btn-login"  onclick="handleLogin()">Login</button>
+        <button class="btn btn-outline hidden" id="btn-signup" onclick="handleSignup()">Create Account</button>
+      </div>
+
+      <div class="divider">or continue with</div>
+      <button class="btn btn-google" onclick="handleGoogle()">
+        <svg width="18" height="18" viewBox="0 0 48 48">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        </svg>
+        Continue with Google
+      </button>
+    </div>
+
+    <!-- ══ B) PRODUCT MANAGEMENT CARD ══ -->
+    <div class="card hidden" id="management-card">
+
+      <!-- User badge + logout -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem;">
+        <div class="user-badge">
+          <span class="dot"></span>
+          <span id="user-email-display"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2b5e584e596b4e464a424705484446">[email&#160;protected]</a></span>
+        </div>
+        <button class="btn btn-outline" onclick="handleLogout()">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+          </svg>
+          Logout
+        </button>
+      </div>
+
+      <!-- Add Product Form -->
+      <h2 class="card-title">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Add New Product
+      </h2>
+
+      <!-- Name -->
+      <div class="form-group">
+        <label for="product-name">Product Name</label>
+        <input type="text" id="product-name" placeholder="e.g. Wireless Headphones" />
+      </div>
+
+      <div class="form-group">
+        <label for="product-desc">Description</label>
+        <textarea id="product-desc" placeholder="Brief description of the product…" rows="3"></textarea>
+      </div>
+
+      <!-- Price -->
+      <div class="form-group">
+        <label for="product-price">Price (USD)</label>
+        <input type="number" id="product-price" placeholder="29.99" min="0" step="0.01" />
+      </div>
+
+      <!-- Image Upload Zone -->
+      <div class="form-group">
+        <label>Product Image</label>
+
+        <div class="upload-zone" id="upload-zone">
+          <!-- Hidden real file input -->
+          <input
+            type="file"
+            id="product-image-file"
+            accept="image/*"
+            onchange="handleFileSelect(this.files[0])"
+          />
+          <!-- Upload icon -->
+          <div class="upload-icon">
+            <svg width="36" height="36" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <p class="upload-label"><span>Click to upload</span> or drag & drop</p>
+          <p class="upload-hint">PNG, JPG, WEBP — max 5MB</p>
+        </div>
+
+        <!-- Preview after file selected -->
+        <div class="image-preview-wrap" id="image-preview-wrap">
+          <img id="image-preview-img" src="" alt="Preview" />
+          <div class="image-preview-info">
+            <div class="image-preview-name" id="image-preview-name">filename.jpg</div>
+            <div class="image-preview-size" id="image-preview-size">0 KB</div>
+          </div>
+          <button class="btn-remove-img" onclick="clearImageSelection()" title="Remove">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Upload progress bar -->
+        <div class="progress-wrap" id="progress-wrap">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progress-bar-fill"></div>
+          </div>
+          <div class="progress-text" id="progress-text">0%</div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="btn-add-product" onclick="handleAddProduct()">
+        Add Product
+      </button>
+
+      <!-- Product List -->
+      <h2 class="card-title" style="margin-top:2rem;">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+        </svg>
+        Manage Products
+      </h2>
+
+      <div id="admin-product-list">
+        <p style="color:var(--muted);font-size:.9rem;">Loading products…</p>
+      </div>
+
+    </div><!-- /management-card -->
+  </main>
+
+  <!-- ══ SCRIPT ══ -->
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
+    import {
+      signUp, login, loginWithGoogle, logout,
+      onAuthChange, addProduct, deleteProduct,
+      listenToProducts, showToast, uploadImage,
+    } from './app.js';
+
+    // ── DOM refs ──
+    const authCard       = document.getElementById('auth-card');
+    const managementCard = document.getElementById('management-card');
+    const userDisplay    = document.getElementById('user-email-display');
+    const adminList      = document.getElementById('admin-product-list');
+    const btnAdd         = document.getElementById('btn-add-product');
+    const uploadZone     = document.getElementById('upload-zone');
+    const previewWrap    = document.getElementById('image-preview-wrap');
+    const previewImg     = document.getElementById('image-preview-img');
+    const previewName    = document.getElementById('image-preview-name');
+    const previewSize    = document.getElementById('image-preview-size');
+    const progressWrap   = document.getElementById('progress-wrap');
+    const progressFill   = document.getElementById('progress-bar-fill');
+    const progressText   = document.getElementById('progress-text');
+
+    // Stores the selected File object
+    let selectedFile = null;
+
+    // ── Drag & Drop ──
+    uploadZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadZone.classList.add('drag-over');
+    });
+    uploadZone.addEventListener('dragleave', () => {
+      uploadZone.classList.remove('drag-over');
+    });
+    uploadZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadZone.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file) handleFileSelect(file);
+    });
+
+    // ── File Selected (from input OR drag-drop) ──
+    window.handleFileSelect = function (file) {
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        showToast('Please select an image file.', 'error');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        showToast('Image must be smaller than 5MB.', 'error');
+        return;
+      }
+
+      selectedFile = file;
+
+      // Show preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previewImg.src     = e.target.result;
+        previewName.textContent = file.name;
+        previewSize.textContent = formatBytes(file.size);
+        previewWrap.classList.add('visible');
+        uploadZone.style.display = 'none'; // hide zone when file selected
+      };
+      reader.readAsDataURL(file);
+    };
+
+    // ── Clear image selection ──
+    window.clearImageSelection = function () {
+      selectedFile = null;
+      previewImg.src = '';
+      previewWrap.classList.remove('visible');
+      uploadZone.style.display = '';
+      document.getElementById('product-image-file').value = '';
+      progressWrap.classList.remove('visible');
+      progressFill.style.width = '0%';
+    };
+
+    // ── Format bytes helper ──
+    function formatBytes(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+    // ── Tab Switcher ──
+    window.switchTab = function (tab) {
+      const isLogin = tab === 'login';
+      document.getElementById('tab-login').classList.toggle('active', isLogin);
+      document.getElementById('tab-signup').classList.toggle('active', !isLogin);
+      document.getElementById('btn-login').classList.toggle('hidden', !isLogin);
+      document.getElementById('btn-signup').classList.toggle('hidden', isLogin);
+    };
+
+    // ── Auth Handlers ──
+    window.handleLogin = async function () {
+      const email    = document.getElementById('auth-email').value.trim();
+      const password = document.getElementById('auth-password').value;
+      try {
+        await login(email, password);
+        showToast('Logged in successfully!', 'success');
+      } catch (err) { showToast(friendlyError(err.code), 'error'); }
+    };
+
+    window.handleSignup = async function () {
+      const email    = document.getElementById('auth-email').value.trim();
+      const password = document.getElementById('auth-password').value;
+      try {
+        await signUp(email, password);
+        showToast('Account created! You are now logged in.', 'success');
+      } catch (err) { showToast(friendlyError(err.code), 'error'); }
+    };
+
+    window.handleGoogle = async function () {
+      try {
+        await loginWithGoogle();
+        showToast('Signed in with Google!', 'success');
+      } catch (err) {
+        if (err.code !== 'auth/popup-closed-by-user')
+          showToast(friendlyError(err.code), 'error');
+      }
+    };
+
+    window.handleLogout = async function () {
+      try {
+        await logout();
+        showToast('Logged out.', 'info');
+      } catch { showToast('Logout failed. Try again.', 'error'); }
+    };
+
+    // ── Add Product Handler (upload image first, then save) ──
+    window.handleAddProduct = async function () {
+      const name  = document.getElementById('product-name').value.trim();
+      const price = document.getElementById('product-price').value;
+
+      // Validate text fields
+      if (!name) { showToast('Product name is required.', 'error'); return; }
+      if (!price || isNaN(price) || Number(price) <= 0) {
+        showToast('Enter a valid price.', 'error'); return;
+      }
+      if (!selectedFile) {
+        showToast('Please select a product image.', 'error'); return;
+      }
+
+      // Disable button
+      btnAdd.disabled = true;
+      btnAdd.innerHTML = '<span class="spinner"></span> Uploading…';
+
+      // Show progress bar
+      progressWrap.classList.add('visible');
+      progressFill.style.width = '0%';
+      progressText.textContent = '0%';
+
+      try {
+        // Step 1: Upload image → get URL
+        const imageUrl = await uploadImage(selectedFile, (percent) => {
+          progressFill.style.width = percent + '%';
+          progressText.textContent = percent + '%';
+          if (percent === 100) {
+            btnAdd.innerHTML = '<span class="spinner"></span> Saving…';
+          }
+        });
+
+        // Step 2: Save product to Realtime DB
+        await addProduct({ name, desc, price, image: imageUrl });
+
+        // Clear form
+        document.getElementById('product-name').value  = '';
+        document.getElementById('product-desc').value   = '';
+        document.getElementById('product-price').value = '';
+        clearImageSelection();
+        progressWrap.classList.remove('visible');
+
+        showToast('Product added successfully!', 'success');
+      } catch (err) {
+        showToast(err.message || 'Upload failed. Try again.', 'error');
+        progressWrap.classList.remove('visible');
+      } finally {
+        btnAdd.disabled = false;
+        btnAdd.textContent = 'Add Product';
+      }
+    };
+
+    window.handleDelete = async function (id) {
+      try {
+        await deleteProduct(id);
+        showToast('Product deleted.', 'info');
+      } catch { showToast('Delete failed. Try again.', 'error'); }
+    };
+
+    // ── Auth State ──
+    onAuthChange((user) => {
+      if (user) {
+        authCard.classList.add('hidden');
+        managementCard.classList.remove('hidden');
+        userDisplay.textContent = user.email || user.displayName || 'Admin';
+        startProductListener();
+      } else {
+        authCard.classList.remove('hidden');
+        managementCard.classList.add('hidden');
+        adminList.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Loading products…</p>';
+      }
+    });
+
+    // ── Real-time Product List ──
+    let listenerStarted = false;
+    function startProductListener() {
+      if (listenerStarted) return;
+      listenerStarted = true;
+      listenToProducts((products) => {
+        adminList.innerHTML = '';
+        if (products.length === 0) {
+          adminList.innerHTML = '<p style="color:var(--muted);font-size:.9rem;padding:.5rem 0;">No products yet. Add your first one above!</p>';
+          return;
+        }
+        const latest = products.slice(-10).reverse();
+        latest.forEach((product) => {
+          const item = document.createElement('div');
+          item.className = 'admin-product-item';
+          item.innerHTML = `
+            <img class="admin-product-img"
+              src="${escapeHtml(product.image)}"
+              alt="${escapeHtml(product.name)}"
+              onerror="this.src='https://placehold.co/52x52/f8f4ef/9e8e82?text=?'"
+            />
+            <div class="admin-product-info">
+              <div class="admin-product-name">${escapeHtml(product.name)}</div>
+              ${product.desc ? `<div class="admin-product-desc">${escapeHtml(product.desc)}</div>` : ''}
+              <div class="admin-product-price">$${Number(product.price).toFixed(2)}</div>
+            </div>
+            <button class="btn btn-danger" onclick="handleDelete('${product.id}')">Delete</button>
+          `;
+          adminList.appendChild(item);
+        });
+      });
+    }
+
+    function friendlyError(code) {
+  const map = {
+    'auth/invalid-email':          'Invalid email address.',
+    'auth/user-not-found':         'No account with this email.',
+    'auth/wrong-password':         'Incorrect password.',
+    'auth/email-already-in-use':   'Email already in use.',
+    'auth/weak-password':          'Password must be at least 6 characters.',
+    'auth/too-many-requests':      'Too many attempts. Please wait.',
+    'auth/network-request-failed': 'Network error. Check your connection.',
+    'auth/invalid-credential':     'Invalid credentials.',
+  };
+  return map[code] || 'Something went wrong.';  
+} 
