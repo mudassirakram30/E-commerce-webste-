@@ -6,7 +6,6 @@
   <title>ShopNest — Admin Panel</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* ── Image Upload Zone ── */
     .upload-zone {
       border: 2px dashed var(--border);
       border-radius: var(--radius-sm);
@@ -17,106 +16,29 @@
       transition: border-color var(--transition), background var(--transition);
       position: relative;
     }
-    .upload-zone:hover,
-    .upload-zone.drag-over {
-      border-color: var(--accent);
-      background: rgba(200,149,108,.05);
-    }
-    .upload-zone input[type="file"] {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      cursor: pointer;
-      width: 100%;
-      height: 100%;
-    }
-    .upload-icon { color: var(--muted); margin-bottom: .5rem; }
-    .upload-label {
-      font-size: .9rem;
-      color: var(--muted);
-      pointer-events: none;
-    }
-    .upload-label span {
-      color: var(--accent-dark);
-      font-weight: 600;
-    }
-    .upload-hint {
-      font-size: .78rem;
-      color: var(--muted);
-      margin-top: .25rem;
-      pointer-events: none;
-    }
+    .upload-zone:hover { border-color: var(--accent); background: rgba(200,149,108,.05); }
+    .upload-zone p { font-size: .9rem; color: var(--muted); margin: .4rem 0 0; }
+    .upload-zone span { font-size: .78rem; color: var(--muted); }
+    .upload-zone input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
 
-    /* ── Image Preview ── */
-    .image-preview-wrap {
-      display: none;
-      align-items: center;
-      gap: 1rem;
-      margin-top: .85rem;
-      padding: .75rem;
-      background: var(--warm-white);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-    }
-    .image-preview-wrap.visible { display: flex; }
-    .image-preview-wrap img {
-      width: 64px;
-      height: 64px;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-    }
-    .image-preview-info { flex: 1; min-width: 0; }
-    .image-preview-name {
-      font-size: .88rem;
-      font-weight: 600;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .image-preview-size { font-size: .78rem; color: var(--muted); }
-    .btn-remove-img {
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--danger);
-      padding: .25rem;
-      border-radius: 4px;
-      transition: background var(--transition);
-      flex-shrink: 0;
-    }
-    .btn-remove-img:hover { background: rgba(224,92,92,.1); }
+    .image-preview-wrap { display:none; align-items:center; gap:1rem; margin-top:.75rem; padding:.75rem; background:var(--warm-white); border:1px solid var(--border); border-radius:var(--radius-sm); }
+    .image-preview-wrap.visible { display:flex; }
+    .image-preview-wrap img { width:60px; height:60px; object-fit:cover; border-radius:8px; border:1px solid var(--border); }
+    .image-preview-info { flex:1; min-width:0; }
+    .image-preview-name { font-size:.88rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .image-preview-size { font-size:.78rem; color:var(--muted); }
+    .btn-remove-img { background:none; border:none; cursor:pointer; color:var(--danger); padding:.3rem; border-radius:4px; }
+    .btn-remove-img:hover { background:rgba(224,92,92,.1); }
 
-    /* ── Progress Bar ── */
-    .progress-wrap {
-      display: none;
-      margin-top: .75rem;
-    }
-    .progress-wrap.visible { display: block; }
-    .progress-bar-bg {
-      background: var(--border);
-      border-radius: 50px;
-      height: 6px;
-      overflow: hidden;
-    }
-    .progress-bar-fill {
-      height: 100%;
-      background: var(--accent);
-      border-radius: 50px;
-      width: 0%;
-      transition: width .2s ease;
-    }
-    .progress-text {
-      font-size: .78rem;
-      color: var(--muted);
-      margin-top: .3rem;
-      text-align: right;
-    }
+    .progress-wrap { display:none; margin-top:.6rem; }
+    .progress-wrap.visible { display:block; }
+    .progress-bar-bg { background:var(--border); border-radius:50px; height:6px; overflow:hidden; }
+    .progress-bar-fill { height:100%; background:var(--accent); border-radius:50px; width:0%; transition:width .2s ease; }
+    .progress-text { font-size:.78rem; color:var(--muted); margin-top:.25rem; text-align:right; }
   </style>
 </head>
 <body>
 
-  <!-- ══ NAVBAR ══ -->
   <nav class="navbar">
     <div class="navbar-inner">
       <a href="index.html" class="nav-brand">Shop<span>Nest</span></a>
@@ -127,12 +49,11 @@
     </div>
   </nav>
 
-  <!-- ══ ADMIN WRAPPER ══ -->
   <main class="admin-wrapper">
     <h1 class="admin-title">Admin Panel</h1>
     <p class="admin-subtitle">Manage your store products and account.</p>
 
-    <!-- ══ A) AUTH CARD ══ -->
+    <!-- AUTH CARD -->
     <div class="card" id="auth-card">
       <h2 class="card-title">
         <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -143,8 +64,8 @@
       </h2>
 
       <div class="auth-tabs">
-        <button class="auth-tab active" id="tab-login"  onclick="switchTab('login')">Login</button>
-        <button class="auth-tab"        id="tab-signup" onclick="switchTab('signup')">Sign Up</button>
+        <button class="auth-tab active" id="tab-login">Login</button>
+        <button class="auth-tab" id="tab-signup">Sign Up</button>
       </div>
 
       <div class="form-group">
@@ -157,12 +78,12 @@
       </div>
 
       <div class="btn-group">
-        <button class="btn btn-primary" id="btn-login"  onclick="handleLogin()">Login</button>
-        <button class="btn btn-outline hidden" id="btn-signup" onclick="handleSignup()">Create Account</button>
+        <button class="btn btn-primary" id="btn-login">Login</button>
+        <button class="btn btn-outline hidden" id="btn-signup">Create Account</button>
       </div>
 
       <div class="divider">or continue with</div>
-      <button class="btn btn-google" onclick="handleGoogle()">
+      <button class="btn btn-google" id="btn-google">
         <svg width="18" height="18" viewBox="0 0 48 48">
           <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
           <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
@@ -173,16 +94,15 @@
       </button>
     </div>
 
-    <!-- ══ B) PRODUCT MANAGEMENT CARD ══ -->
+    <!-- MANAGEMENT CARD -->
     <div class="card hidden" id="management-card">
 
-      <!-- User badge + logout -->
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem;">
         <div class="user-badge">
           <span class="dot"></span>
-          <span id="user-email-display"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2b5e584e596b4e464a424705484446">[email&#160;protected]</a></span>
+          <span id="user-email-display">user@email.com</span>
         </div>
-        <button class="btn btn-outline" onclick="handleLogout()">
+        <button class="btn btn-outline" id="btn-logout">
           <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
@@ -191,7 +111,6 @@
         </button>
       </div>
 
-      <!-- Add Product Form -->
       <h2 class="card-title">
         <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -199,7 +118,6 @@
         Add New Product
       </h2>
 
-      <!-- Name -->
       <div class="form-group">
         <label for="product-name">Product Name</label>
         <input type="text" id="product-name" placeholder="e.g. Wireless Headphones" />
@@ -210,251 +128,246 @@
         <textarea id="product-desc" placeholder="Brief description of the product…" rows="3"></textarea>
       </div>
 
-      <!-- Price -->
       <div class="form-group">
-        <label for="product-price">Price (USD)</label>
+        <label for="product-price">Price (Pkr)</label>
         <input type="number" id="product-price" placeholder="29.99" min="0" step="0.01" />
       </div>
 
-      <!-- Image Upload Zone -->
       <div class="form-group">
         <label>Product Image</label>
-
         <div class="upload-zone" id="upload-zone">
-          <!-- Hidden real file input -->
-          <input
-            type="file"
-            id="product-image-file"
-            accept="image/*"
-            onchange="handleFileSelect(this.files[0])"
-          />
-          <!-- Upload icon -->
-          <div class="upload-icon">
-            <svg width="36" height="36" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-            </svg>
-          </div>
-          <p class="upload-label"><span>Click to upload</span> or drag & drop</p>
-          <p class="upload-hint">PNG, JPG, WEBP — max 5MB</p>
+          <input type="file" id="product-image-file" accept="image/*" />
+          <svg width="30" height="30" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color:var(--muted)">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          <p><strong style="color:var(--accent-dark)">Click to upload</strong> or drag &amp; drop</p>
+          <span>PNG, JPG, WEBP — max 5MB</span>
         </div>
 
-        <!-- Preview after file selected -->
-        <div class="image-preview-wrap" id="image-preview-wrap">
-          <img id="image-preview-img" src="" alt="Preview" />
+        <div class="image-preview-wrap" id="preview-wrap">
+          <img id="preview-img" src="" alt="Preview" />
           <div class="image-preview-info">
-            <div class="image-preview-name" id="image-preview-name">filename.jpg</div>
-            <div class="image-preview-size" id="image-preview-size">0 KB</div>
+            <div class="image-preview-name" id="preview-name">filename.jpg</div>
+            <div class="image-preview-size" id="preview-size">0 KB</div>
           </div>
-          <button class="btn-remove-img" onclick="clearImageSelection()" title="Remove">
+          <button class="btn-remove-img" id="btn-remove-img" title="Remove image">
             <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
           </button>
         </div>
 
-        <!-- Upload progress bar -->
         <div class="progress-wrap" id="progress-wrap">
           <div class="progress-bar-bg">
-            <div class="progress-bar-fill" id="progress-bar-fill"></div>
+            <div class="progress-bar-fill" id="progress-fill"></div>
           </div>
           <div class="progress-text" id="progress-text">0%</div>
         </div>
       </div>
 
-      <button class="btn btn-primary" id="btn-add-product" onclick="handleAddProduct()">
-        Add Product
-      </button>
+      <button class="btn btn-primary" id="btn-add-product">Add Product</button>
 
-      <!-- Product List -->
       <h2 class="card-title" style="margin-top:2rem;">
         <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
         </svg>
         Manage Products
       </h2>
-
       <div id="admin-product-list">
-        <p style="color:var(--muted);font-size:.9rem;">Loading products…</p>
+        <p style="color:var(--muted);font-size:.9rem;">No products yet.</p>
       </div>
 
-    </div><!-- /management-card -->
+    </div>
   </main>
 
-  <!-- ══ SCRIPT ══ -->
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
-    import {
-      signUp, login, loginWithGoogle, logout,
-      onAuthChange, addProduct, deleteProduct,
-      listenToProducts, showToast, uploadImage,
-    } from './app.js';
+  <script type="module">
+    import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+             signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged }
+             from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getDatabase, ref, push, remove, onValue, query, limitToLast }
+             from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+    import { getStorage, ref as sRef, uploadBytesResumable, getDownloadURL }
+             from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-    // ── DOM refs ──
-    const authCard       = document.getElementById('auth-card');
-    const managementCard = document.getElementById('management-card');
-    const userDisplay    = document.getElementById('user-email-display');
-    const adminList      = document.getElementById('admin-product-list');
-    const btnAdd         = document.getElementById('btn-add-product');
-    const uploadZone     = document.getElementById('upload-zone');
-    const previewWrap    = document.getElementById('image-preview-wrap');
-    const previewImg     = document.getElementById('image-preview-img');
-    const previewName    = document.getElementById('image-preview-name');
-    const previewSize    = document.getElementById('image-preview-size');
-    const progressWrap   = document.getElementById('progress-wrap');
-    const progressFill   = document.getElementById('progress-bar-fill');
-    const progressText   = document.getElementById('progress-text');
-
-    // Stores the selected File object
-    let selectedFile = null;
-
-    // ── Drag & Drop ──
-    uploadZone.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      uploadZone.classList.add('drag-over');
-    });
-    uploadZone.addEventListener('dragleave', () => {
-      uploadZone.classList.remove('drag-over');
-    });
-    uploadZone.addEventListener('drop', (e) => {
-      e.preventDefault();
-      uploadZone.classList.remove('drag-over');
-      const file = e.dataTransfer.files[0];
-      if (file) handleFileSelect(file);
+    const app = initializeApp({
+      apiKey:            "AIzaSyAY8JRgXXlO5Mutb0otOkwv7yZFTyn1t6E",
+      authDomain:        "ecommerce-web-73dbf.firebaseapp.com",
+      databaseURL:       "https://ecommerce-web-73dbf-default-rtdb.firebaseio.com",
+      projectId:         "ecommerce-web-73dbf",
+      storageBucket:     "ecommerce-web-73dbf.firebasestorage.app",
+      messagingSenderId: "234407828753",
+      appId:             "1:234407828753:web:365b2cc62ae9db992f00b0",
     });
 
-    // ── File Selected (from input OR drag-drop) ──
-    window.handleFileSelect = function (file) {
-      if (!file) return;
-      if (!file.type.startsWith('image/')) {
-        showToast('Please select an image file.', 'error');
-        return;
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        showToast('Image must be smaller than 5MB.', 'error');
-        return;
-      }
+    const auth     = getAuth(app);
+    const db       = getDatabase(app);
+    const storage  = getStorage(app);
+    const provider = new GoogleAuthProvider();
 
-      selectedFile = file;
+    // DOM refs
+    const authCard     = document.getElementById('auth-card');
+    const mgmtCard     = document.getElementById('management-card');
+    const userDisplay  = document.getElementById('user-email-display');
+    const adminList    = document.getElementById('admin-product-list');
+    const btnAdd       = document.getElementById('btn-add-product');
+    const fileInput    = document.getElementById('product-image-file');
+    const uploadZone   = document.getElementById('upload-zone');
+    const previewWrap  = document.getElementById('preview-wrap');
+    const previewImg   = document.getElementById('preview-img');
+    const previewName  = document.getElementById('preview-name');
+    const previewSize  = document.getElementById('preview-size');
+    const progressWrap = document.getElementById('progress-wrap');
+    const progressFill = document.getElementById('progress-fill');
+    const progressText = document.getElementById('progress-text');
 
-      // Show preview
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        previewImg.src     = e.target.result;
-        previewName.textContent = file.name;
-        previewSize.textContent = formatBytes(file.size);
-        previewWrap.classList.add('visible');
-        uploadZone.style.display = 'none'; // hide zone when file selected
-      };
-      reader.readAsDataURL(file);
-    };
+    let selectedFile    = null;
+    let listenerStarted = false;
 
-    // ── Clear image selection ──
-    window.clearImageSelection = function () {
-      selectedFile = null;
-      previewImg.src = '';
-      previewWrap.classList.remove('visible');
-      uploadZone.style.display = '';
-      document.getElementById('product-image-file').value = '';
-      progressWrap.classList.remove('visible');
-      progressFill.style.width = '0%';
-    };
-
-    // ── Format bytes helper ──
-    function formatBytes(bytes) {
-      if (bytes < 1024) return bytes + ' B';
-      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    // ── Toast ──
+    function showToast(msg, type = 'info') {
+      document.getElementById('toast')?.remove();
+      const t = Object.assign(document.createElement('div'), { id:'toast', className:`toast ${type}`, textContent:msg });
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 3500);
     }
 
     // ── Tab Switcher ──
-    window.switchTab = function (tab) {
-      const isLogin = tab === 'login';
-      document.getElementById('tab-login').classList.toggle('active', isLogin);
-      document.getElementById('tab-signup').classList.toggle('active', !isLogin);
-      document.getElementById('btn-login').classList.toggle('hidden', !isLogin);
-      document.getElementById('btn-signup').classList.toggle('hidden', isLogin);
-    };
+    document.getElementById('tab-login').addEventListener('click', () => {
+      document.getElementById('tab-login').classList.add('active');
+      document.getElementById('tab-signup').classList.remove('active');
+      document.getElementById('btn-login').classList.remove('hidden');
+      document.getElementById('btn-signup').classList.add('hidden');
+    });
+    document.getElementById('tab-signup').addEventListener('click', () => {
+      document.getElementById('tab-signup').classList.add('active');
+      document.getElementById('tab-login').classList.remove('active');
+      document.getElementById('btn-signup').classList.remove('hidden');
+      document.getElementById('btn-login').classList.add('hidden');
+    });
 
-    // ── Auth Handlers ──
-    window.handleLogin = async function () {
-      const email    = document.getElementById('auth-email').value.trim();
-      const password = document.getElementById('auth-password').value;
+    // ── Login ──
+    document.getElementById('btn-login').addEventListener('click', async () => {
+      const email = document.getElementById('auth-email').value.trim();
+      const pass  = document.getElementById('auth-password').value;
       try {
-        await login(email, password);
+        await signInWithEmailAndPassword(auth, email, pass);
         showToast('Logged in successfully!', 'success');
       } catch (err) { showToast(friendlyError(err.code), 'error'); }
-    };
+    });
 
-    window.handleSignup = async function () {
-      const email    = document.getElementById('auth-email').value.trim();
-      const password = document.getElementById('auth-password').value;
+    // ── Sign Up ──
+    document.getElementById('btn-signup').addEventListener('click', async () => {
+      const email = document.getElementById('auth-email').value.trim();
+      const pass  = document.getElementById('auth-password').value;
+      if (pass.length < 6) { showToast('Password must be at least 6 characters.', 'error'); return; }
       try {
-        await signUp(email, password);
+        await createUserWithEmailAndPassword(auth, email, pass);
         showToast('Account created! You are now logged in.', 'success');
       } catch (err) { showToast(friendlyError(err.code), 'error'); }
-    };
+    });
 
-    window.handleGoogle = async function () {
+    // ── Google Sign-In ──
+    document.getElementById('btn-google').addEventListener('click', async () => {
       try {
-        await loginWithGoogle();
+        await signInWithPopup(auth, provider);
         showToast('Signed in with Google!', 'success');
       } catch (err) {
         if (err.code !== 'auth/popup-closed-by-user')
           showToast(friendlyError(err.code), 'error');
       }
-    };
+    });
 
-    window.handleLogout = async function () {
-      try {
-        await logout();
-        showToast('Logged out.', 'info');
-      } catch { showToast('Logout failed. Try again.', 'error'); }
-    };
+    // ── Logout ──
+    document.getElementById('btn-logout').addEventListener('click', async () => {
+      try { await signOut(auth); showToast('Logged out.', 'info'); }
+      catch { showToast('Logout failed.', 'error'); }
+    });
 
-    // ── Add Product Handler (upload image first, then save) ──
-    window.handleAddProduct = async function () {
+    // ── File select ──
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files[0]) handleFileSelect(fileInput.files[0]);
+    });
+    uploadZone.addEventListener('dragover',  (e) => { e.preventDefault(); uploadZone.style.borderColor = 'var(--accent)'; });
+    uploadZone.addEventListener('dragleave', ()  => { uploadZone.style.borderColor = ''; });
+    uploadZone.addEventListener('drop', (e) => {
+      e.preventDefault(); uploadZone.style.borderColor = '';
+      if (e.dataTransfer.files[0]) handleFileSelect(e.dataTransfer.files[0]);
+    });
+
+    function handleFileSelect(file) {
+      if (!file.type.startsWith('image/')) { showToast('Please select an image file.', 'error'); return; }
+      if (file.size > 5 * 1024 * 1024)    { showToast('Image must be under 5MB.', 'error'); return; }
+      selectedFile = file;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previewImg.src = e.target.result;
+        previewName.textContent = file.name;
+        previewSize.textContent = formatBytes(file.size);
+        previewWrap.classList.add('visible');
+        uploadZone.style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    document.getElementById('btn-remove-img').addEventListener('click', () => {
+      selectedFile = null;
+      previewImg.src = '';
+      previewWrap.classList.remove('visible');
+      uploadZone.style.display = '';
+      fileInput.value = '';
+      progressWrap.classList.remove('visible');
+      progressFill.style.width = '0%';
+    });
+
+    function formatBytes(b) {
+      if (b < 1024) return b + ' B';
+      if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
+      return (b/1048576).toFixed(1) + ' MB';
+    }
+
+    // ── Add Product ──
+    btnAdd.addEventListener('click', async () => {
       const name  = document.getElementById('product-name').value.trim();
+      const desc  = document.getElementById('product-desc').value.trim();
       const price = document.getElementById('product-price').value;
 
-      // Validate text fields
-      if (!name) { showToast('Product name is required.', 'error'); return; }
-      if (!price || isNaN(price) || Number(price) <= 0) {
-        showToast('Enter a valid price.', 'error'); return;
-      }
-      if (!selectedFile) {
-        showToast('Please select a product image.', 'error'); return;
-      }
+      if (!name)                                         { showToast('Product name is required.', 'error'); return; }
+      if (!price || isNaN(price) || Number(price) <= 0) { showToast('Enter a valid price.', 'error'); return; }
+      if (!selectedFile)                                 { showToast('Please select a product image.', 'error'); return; }
 
-      // Disable button
       btnAdd.disabled = true;
       btnAdd.innerHTML = '<span class="spinner"></span> Uploading…';
-
-      // Show progress bar
       progressWrap.classList.add('visible');
       progressFill.style.width = '0%';
       progressText.textContent = '0%';
 
       try {
-        // Step 1: Upload image → get URL
-        const imageUrl = await uploadImage(selectedFile, (percent) => {
-          progressFill.style.width = percent + '%';
-          progressText.textContent = percent + '%';
-          if (percent === 100) {
-            btnAdd.innerHTML = '<span class="spinner"></span> Saving…';
-          }
+        const imgRef     = sRef(storage, 'products/' + Date.now() + '_' + selectedFile.name);
+        const uploadTask = uploadBytesResumable(imgRef, selectedFile);
+
+        const imageUrl = await new Promise((resolve, reject) => {
+          uploadTask.on('state_changed',
+            (snap) => {
+              const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+              progressFill.style.width = pct + '%';
+              progressText.textContent = pct + '%';
+              if (pct === 100) btnAdd.innerHTML = '<span class="spinner"></span> Saving…';
+            },
+            reject,
+            async () => resolve(await getDownloadURL(uploadTask.snapshot.ref))
+          );
         });
 
-        // Step 2: Save product to Realtime DB
-        await addProduct({ name, desc, price, image: imageUrl });
+        await push(ref(db, 'products'), { name, desc: desc || '', price: Number(price), image: imageUrl });
 
-        // Clear form
+        // Reset
         document.getElementById('product-name').value  = '';
-        document.getElementById('product-desc').value   = '';
+        document.getElementById('product-desc').value  = '';
         document.getElementById('product-price').value = '';
-        clearImageSelection();
+        document.getElementById('btn-remove-img').click();
         progressWrap.classList.remove('visible');
-
         showToast('Product added successfully!', 'success');
       } catch (err) {
         showToast(err.message || 'Upload failed. Try again.', 'error');
@@ -463,72 +376,77 @@
         btnAdd.disabled = false;
         btnAdd.textContent = 'Add Product';
       }
-    };
+    });
 
-    window.handleDelete = async function (id) {
-      try {
-        await deleteProduct(id);
-        showToast('Product deleted.', 'info');
-      } catch { showToast('Delete failed. Try again.', 'error'); }
-    };
+    // ── Delete (event delegation — works for dynamic elements) ──
+    adminList.addEventListener('click', async (e) => {
+      const btn = e.target.closest('[data-delete-id]');
+      if (!btn) return;
+      try { await remove(ref(db, 'products/' + btn.dataset.deleteId)); showToast('Product deleted.', 'info'); }
+      catch { showToast('Delete failed.', 'error'); }
+    });
 
     // ── Auth State ──
-    onAuthChange((user) => {
+    onAuthStateChanged(auth, (user) => {
       if (user) {
         authCard.classList.add('hidden');
-        managementCard.classList.remove('hidden');
+        mgmtCard.classList.remove('hidden');
         userDisplay.textContent = user.email || user.displayName || 'Admin';
         startProductListener();
       } else {
         authCard.classList.remove('hidden');
-        managementCard.classList.add('hidden');
-        adminList.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Loading products…</p>';
+        mgmtCard.classList.add('hidden');
       }
     });
 
-    // ── Real-time Product List ──
-    let listenerStarted = false;
+    // ── Product Listener ──
     function startProductListener() {
       if (listenerStarted) return;
       listenerStarted = true;
-      listenToProducts((products) => {
+      onValue(query(ref(db, 'products'), limitToLast(10)), (snapshot) => {
         adminList.innerHTML = '';
-        if (products.length === 0) {
+        if (!snapshot.exists()) {
           adminList.innerHTML = '<p style="color:var(--muted);font-size:.9rem;padding:.5rem 0;">No products yet. Add your first one above!</p>';
           return;
         }
-        const latest = products.slice(-10).reverse();
-        latest.forEach((product) => {
-          const item = document.createElement('div');
-          item.className = 'admin-product-item';
-          item.innerHTML = `
-            <img class="admin-product-img"
-              src="${escapeHtml(product.image)}"
-              alt="${escapeHtml(product.name)}"
-              onerror="this.src='https://placehold.co/52x52/f8f4ef/9e8e82?text=?'"
-            />
+        const items = [];
+        snapshot.forEach((c) => items.push({ id: c.key, ...c.val() }));
+        items.reverse().forEach((p) => {
+          const div = document.createElement('div');
+          div.className = 'admin-product-item';
+          div.innerHTML = `
+            <img class="admin-product-img" src="${esc(p.image)}" alt="${esc(p.name)}"
+                 onerror="this.src='https://placehold.co/52x52/f8f4ef/9e8e82?text=?'" />
             <div class="admin-product-info">
-              <div class="admin-product-name">${escapeHtml(product.name)}</div>
-              ${product.desc ? `<div class="admin-product-desc">${escapeHtml(product.desc)}</div>` : ''}
-              <div class="admin-product-price">$${Number(product.price).toFixed(2)}</div>
+              <div class="admin-product-name">${esc(p.name)}</div>
+              ${p.desc ? `<div class="admin-product-desc">${esc(p.desc)}</div>` : ''}
+              <div class="admin-product-price">$${Number(p.price).toFixed(2)}</div>
             </div>
-            <button class="btn btn-danger" onclick="handleDelete('${product.id}')">Delete</button>
+            <button class="btn btn-danger" data-delete-id="${p.id}">Delete</button>
           `;
-          adminList.appendChild(item);
+          adminList.appendChild(div);
         });
       });
     }
 
+    // ── Helpers ──
+    function esc(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
     function friendlyError(code) {
-  const map = {
-    'auth/invalid-email':          'Invalid email address.',
-    'auth/user-not-found':         'No account with this email.',
-    'auth/wrong-password':         'Incorrect password.',
-    'auth/email-already-in-use':   'Email already in use.',
-    'auth/weak-password':          'Password must be at least 6 characters.',
-    'auth/too-many-requests':      'Too many attempts. Please wait.',
-    'auth/network-request-failed': 'Network error. Check your connection.',
-    'auth/invalid-credential':     'Invalid credentials.',
-  };
-  return map[code] || 'Something went wrong.';  
-} 
+      return ({
+        'auth/invalid-email':          'Invalid email address.',
+        'auth/user-not-found':         'No account found with this email.',
+        'auth/wrong-password':         'Incorrect password.',
+        'auth/email-already-in-use':   'This email is already registered.',
+        'auth/weak-password':          'Password must be at least 6 characters.',
+        'auth/too-many-requests':      'Too many attempts. Please wait.',
+        'auth/network-request-failed': 'Network error. Check your connection.',
+        'auth/invalid-credential':     'Invalid email or password.',
+        'auth/popup-blocked':          'Popup blocked. Please allow popups for this site.',
+      })[code] || 'Something went wrong. Please try again.';
+    }
+
+  </script>
+</body>
+</html>
