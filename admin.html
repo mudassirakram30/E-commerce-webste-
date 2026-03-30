@@ -30,11 +30,7 @@
     .btn-remove-img { background:none; border:none; cursor:pointer; color:var(--danger); padding:.3rem; border-radius:4px; }
     .btn-remove-img:hover { background:rgba(224,92,92,.1); }
 
-    .progress-wrap { display:none; margin-top:.6rem; }
-    .progress-wrap.visible { display:block; }
-    .progress-bar-bg { background:var(--border); border-radius:50px; height:6px; overflow:hidden; }
-    .progress-bar-fill { height:100%; background:var(--accent); border-radius:50px; width:0%; transition:width .2s ease; }
-    .progress-text { font-size:.78rem; color:var(--muted); margin-top:.25rem; text-align:right; }
+
   </style>
 </head>
 <body>
@@ -100,7 +96,7 @@
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem;">
         <div class="user-badge">
           <span class="dot"></span>
-          <span id="user-email-display">user@email.com</span>
+          <span id="user-email-display"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="deabadbbac9ebbb3bfb7b2f0bdb1b3">[email&#160;protected]</a></span>
         </div>
         <button class="btn btn-outline" id="btn-logout">
           <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -129,7 +125,7 @@
       </div>
 
       <div class="form-group">
-        <label for="product-price">Price (Pkr)</label>
+        <label for="product-price">Price (USD)</label>
         <input type="number" id="product-price" placeholder="29.99" min="0" step="0.01" />
       </div>
 
@@ -158,12 +154,6 @@
           </button>
         </div>
 
-        <div class="progress-wrap" id="progress-wrap">
-          <div class="progress-bar-bg">
-            <div class="progress-bar-fill" id="progress-fill"></div>
-          </div>
-          <div class="progress-text" id="progress-text">0%</div>
-        </div>
       </div>
 
       <button class="btn btn-primary" id="btn-add-product">Add Product</button>
@@ -181,15 +171,14 @@
     </div>
   </main>
 
-  <script type="module">
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
     import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
              signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged }
              from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { getDatabase, ref, push, remove, onValue, query, limitToLast }
              from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-    import { getStorage, ref as sRef, uploadBytesResumable, getDownloadURL }
-             from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
 
     const app = initializeApp({
       apiKey:            "AIzaSyAY8JRgXXlO5Mutb0otOkwv7yZFTyn1t6E",
@@ -203,7 +192,6 @@
 
     const auth     = getAuth(app);
     const db       = getDatabase(app);
-    const storage  = getStorage(app);
     const provider = new GoogleAuthProvider();
 
     // DOM refs
@@ -218,9 +206,7 @@
     const previewImg   = document.getElementById('preview-img');
     const previewName  = document.getElementById('preview-name');
     const previewSize  = document.getElementById('preview-size');
-    const progressWrap = document.getElementById('progress-wrap');
-    const progressFill = document.getElementById('progress-fill');
-    const progressText = document.getElementById('progress-text');
+
 
     let selectedFile    = null;
     let listenerStarted = false;
@@ -317,8 +303,6 @@
       previewWrap.classList.remove('visible');
       uploadZone.style.display = '';
       fileInput.value = '';
-      progressWrap.classList.remove('visible');
-      progressFill.style.width = '0%';
     });
 
     function formatBytes(b) {
@@ -338,40 +322,27 @@
       if (!selectedFile)                                 { showToast('Please select a product image.', 'error'); return; }
 
       btnAdd.disabled = true;
-      btnAdd.innerHTML = '<span class="spinner"></span> Uploading…';
-      progressWrap.classList.add('visible');
-      progressFill.style.width = '0%';
-      progressText.textContent = '0%';
+      btnAdd.innerHTML = '<span class="spinner"></span> Saving…';
 
       try {
-        const imgRef     = sRef(storage, 'products/' + Date.now() + '_' + selectedFile.name);
-        const uploadTask = uploadBytesResumable(imgRef, selectedFile);
+        // Resize + compress image before saving to DB (max 400px wide, quality 0.7)
+        const imageBase64 = await compressImage(selectedFile, 400, 0.7);
 
-        const imageUrl = await new Promise((resolve, reject) => {
-          uploadTask.on('state_changed',
-            (snap) => {
-              const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
-              progressFill.style.width = pct + '%';
-              progressText.textContent = pct + '%';
-              if (pct === 100) btnAdd.innerHTML = '<span class="spinner"></span> Saving…';
-            },
-            reject,
-            async () => resolve(await getDownloadURL(uploadTask.snapshot.ref))
-          );
+        await push(ref(db, 'products'), {
+          name,
+          desc:  desc || '',
+          price: Number(price),
+          image: imageBase64,
         });
 
-        await push(ref(db, 'products'), { name, desc: desc || '', price: Number(price), image: imageUrl });
-
-        // Reset
+        // Reset form
         document.getElementById('product-name').value  = '';
         document.getElementById('product-desc').value  = '';
         document.getElementById('product-price').value = '';
         document.getElementById('btn-remove-img').click();
-        progressWrap.classList.remove('visible');
         showToast('Product added successfully!', 'success');
       } catch (err) {
-        showToast(err.message || 'Upload failed. Try again.', 'error');
-        progressWrap.classList.remove('visible');
+        showToast(err.message || 'Failed to add product. Try again.', 'error');
       } finally {
         btnAdd.disabled = false;
         btnAdd.textContent = 'Add Product';
@@ -429,24 +400,48 @@
       });
     }
 
+    // ── Compress image using Canvas ──
+    function compressImage(file, maxWidth, quality) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = reject;
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onerror = reject;
+          img.onload = () => {
+            // Calculate new dimensions keeping aspect ratio
+            let w = img.width;
+            let h = img.height;
+            if (w > maxWidth) {
+              h = Math.round((h * maxWidth) / w);
+              w = maxWidth;
+            }
+            // Draw on canvas and compress
+            const canvas = document.createElement('canvas');
+            canvas.width  = w;
+            canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
     // ── Helpers ──
     function esc(s) {
       return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
     function friendlyError(code) {
-      return ({
-        'auth/invalid-email':          'Invalid email address.',
-        'auth/user-not-found':         'No account found with this email.',
-        'auth/wrong-password':         'Incorrect password.',
-        'auth/email-already-in-use':   'This email is already registered.',
-        'auth/weak-password':          'Password must be at least 6 characters.',
-        'auth/too-many-requests':      'Too many attempts. Please wait.',
-        'auth/network-request-failed': 'Network error. Check your connection.',
-        'auth/invalid-credential':     'Invalid email or password.',
-        'auth/popup-blocked':          'Popup blocked. Please allow popups for this site.',
-      })[code] || 'Something went wrong. Please try again.';
-    }
-
-  </script>
-</body>
-</html>
+  return ({
+    'auth/invalid-email':          'Invalid email address.',
+    'auth/user-not-found':         'No account found with this email.',
+    'auth/wrong-password':         'Incorrect password.',
+    'auth/email-already-in-use':   'This email is already registered.',
+    'auth/weak-password':          'Password must be at least 6 characters.',
+    'auth/too-many-requests':      'Too many attempts. Please wait.',
+    'auth/network-request-failed': 'Network error. Check your connection.',
+    'auth/invalid-credential':     'Invalid credentials. Please try again.',
+  })[code] || 'An error occurred. Please try again.';
+}
