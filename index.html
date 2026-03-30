@@ -89,7 +89,7 @@
               ${escapeHtml(product.name)}
             </p>
             ${product.desc ? `<p class="product-card-desc">${escapeHtml(product.desc)}</p>` : ''}
-            <p class="product-card-price">$${Number(product.price).toFixed(2)}</p>
+            <p class="product-card-price">Pkr${Number(product.price).toFixed(2)}</p>
           </div>
         `;
         grid.appendChild(card);
