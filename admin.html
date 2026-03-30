@@ -17,24 +17,31 @@
       position: relative;
     }
     .upload-zone:hover { border-color: var(--accent); background: rgba(200,149,108,.05); }
-    .upload-zone p { font-size: .9rem; color: var(--muted); margin: .4rem 0 0; }
-    .upload-zone span { font-size: .78rem; color: var(--muted); }
-    .upload-zone input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
-
-    .image-preview-wrap { display:none; align-items:center; gap:1rem; margin-top:.75rem; padding:.75rem; background:var(--warm-white); border:1px solid var(--border); border-radius:var(--radius-sm); }
-    .image-preview-wrap.visible { display:flex; }
+    .upload-zone p { font-size:.9rem; color:var(--muted); margin:.4rem 0 0; }
+    .upload-zone span { font-size:.78rem; color:var(--muted); }
+    .upload-zone input[type="file"] {
+      position: absolute; inset: 0; opacity: 0;
+      cursor: pointer; width: 100%; height: 100%;
+    }
+    .image-preview-wrap {
+      display: none; align-items: center; gap: 1rem;
+      margin-top: .75rem; padding: .75rem;
+      background: var(--warm-white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+    .image-preview-wrap.visible { display: flex; }
     .image-preview-wrap img { width:60px; height:60px; object-fit:cover; border-radius:8px; border:1px solid var(--border); }
     .image-preview-info { flex:1; min-width:0; }
     .image-preview-name { font-size:.88rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .image-preview-size { font-size:.78rem; color:var(--muted); }
     .btn-remove-img { background:none; border:none; cursor:pointer; color:var(--danger); padding:.3rem; border-radius:4px; }
     .btn-remove-img:hover { background:rgba(224,92,92,.1); }
-
-
   </style>
 </head>
 <body>
 
+  <!-- NAVBAR -->
   <nav class="navbar">
     <div class="navbar-inner">
       <a href="index.html" class="nav-brand">Shop<span>Nest</span></a>
@@ -59,6 +66,7 @@
         Account Access
       </h2>
 
+      <!-- TABS -->
       <div class="auth-tabs">
         <button class="auth-tab active" id="tab-login">Login</button>
         <button class="auth-tab" id="tab-signup">Sign Up</button>
@@ -66,11 +74,11 @@
 
       <div class="form-group">
         <label for="auth-email">Email Address</label>
-        <input type="email" id="auth-email" placeholder="you@example.com" autocomplete="email" />
+        <input type="email" id="auth-email" placeholder="you@example.com" />
       </div>
       <div class="form-group">
         <label for="auth-password">Password</label>
-        <input type="password" id="auth-password" placeholder="••••••••" autocomplete="current-password" />
+        <input type="password" id="auth-password" placeholder="••••••••" />
       </div>
 
       <div class="btn-group">
@@ -96,7 +104,7 @@
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem;">
         <div class="user-badge">
           <span class="dot"></span>
-          <span id="user-email-display"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="deabadbbac9ebbb3bfb7b2f0bdb1b3">[email&#160;protected]</a></span>
+          <span id="user-email-display">user@email.com</span>
         </div>
         <button class="btn btn-outline" id="btn-logout">
           <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -138,22 +146,21 @@
                   d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
           </svg>
           <p><strong style="color:var(--accent-dark)">Click to upload</strong> or drag &amp; drop</p>
-          <span>PNG, JPG, WEBP — max 5MB</span>
+          <span>PNG, JPG, WEBP — max 2MB</span>
         </div>
 
         <div class="image-preview-wrap" id="preview-wrap">
           <img id="preview-img" src="" alt="Preview" />
           <div class="image-preview-info">
-            <div class="image-preview-name" id="preview-name">filename.jpg</div>
-            <div class="image-preview-size" id="preview-size">0 KB</div>
+            <div class="image-preview-name" id="preview-name"></div>
+            <div class="image-preview-size" id="preview-size"></div>
           </div>
-          <button class="btn-remove-img" id="btn-remove-img" title="Remove image">
+          <button class="btn-remove-img" id="btn-remove-img" title="Remove">
             <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
           </button>
         </div>
-
       </div>
 
       <button class="btn btn-primary" id="btn-add-product">Add Product</button>
@@ -171,15 +178,20 @@
     </div>
   </main>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
-    import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-             signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged }
-             from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getDatabase, ref, push, remove, onValue, query, limitToLast }
-             from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+  <script type="module">
 
+    // ── Firebase Imports ──
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+      signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      getDatabase, ref, push, remove, onValue, query, limitToLast
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
+    // ── Config ──
     const app = initializeApp({
       apiKey:            "AIzaSyAY8JRgXXlO5Mutb0otOkwv7yZFTyn1t6E",
       authDomain:        "ecommerce-web-73dbf.firebaseapp.com",
@@ -194,230 +206,66 @@
     const db       = getDatabase(app);
     const provider = new GoogleAuthProvider();
 
-    // DOM refs
-    const authCard     = document.getElementById('auth-card');
-    const mgmtCard     = document.getElementById('management-card');
-    const userDisplay  = document.getElementById('user-email-display');
-    const adminList    = document.getElementById('admin-product-list');
-    const btnAdd       = document.getElementById('btn-add-product');
-    const fileInput    = document.getElementById('product-image-file');
-    const uploadZone   = document.getElementById('upload-zone');
-    const previewWrap  = document.getElementById('preview-wrap');
-    const previewImg   = document.getElementById('preview-img');
-    const previewName  = document.getElementById('preview-name');
-    const previewSize  = document.getElementById('preview-size');
-
-
     let selectedFile    = null;
     let listenerStarted = false;
 
     // ── Toast ──
-    function showToast(msg, type = 'info') {
-      document.getElementById('toast')?.remove();
-      const t = Object.assign(document.createElement('div'), { id:'toast', className:`toast ${type}`, textContent:msg });
+    function showToast(msg, type) {
+      document.getElementById('toast') && document.getElementById('toast').remove();
+      var t = document.createElement('div');
+      t.id = 'toast';
+      t.className = 'toast ' + (type || 'info');
+      t.textContent = msg;
       document.body.appendChild(t);
-      setTimeout(() => t.remove(), 3500);
+      setTimeout(function() { t.remove(); }, 3500);
     }
 
-    // ── Tab Switcher ──
-    document.getElementById('tab-login').addEventListener('click', () => {
-      document.getElementById('tab-login').classList.add('active');
-      document.getElementById('tab-signup').classList.remove('active');
-      document.getElementById('btn-login').classList.remove('hidden');
-      document.getElementById('btn-signup').classList.add('hidden');
-    });
-    document.getElementById('tab-signup').addEventListener('click', () => {
-      document.getElementById('tab-signup').classList.add('active');
-      document.getElementById('tab-login').classList.remove('active');
-      document.getElementById('btn-signup').classList.remove('hidden');
-      document.getElementById('btn-login').classList.add('hidden');
-    });
+    // ── Escape HTML ──
+    function esc(s) {
+      return String(s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
 
-    // ── Login ──
-    document.getElementById('btn-login').addEventListener('click', async () => {
-      const email = document.getElementById('auth-email').value.trim();
-      const pass  = document.getElementById('auth-password').value;
-      try {
-        await signInWithEmailAndPassword(auth, email, pass);
-        showToast('Logged in successfully!', 'success');
-      } catch (err) { showToast(friendlyError(err.code), 'error'); }
-    });
-
-    // ── Sign Up ──
-    document.getElementById('btn-signup').addEventListener('click', async () => {
-      const email = document.getElementById('auth-email').value.trim();
-      const pass  = document.getElementById('auth-password').value;
-      if (pass.length < 6) { showToast('Password must be at least 6 characters.', 'error'); return; }
-      try {
-        await createUserWithEmailAndPassword(auth, email, pass);
-        showToast('Account created! You are now logged in.', 'success');
-      } catch (err) { showToast(friendlyError(err.code), 'error'); }
-    });
-
-    // ── Google Sign-In ──
-    document.getElementById('btn-google').addEventListener('click', async () => {
-      try {
-        await signInWithPopup(auth, provider);
-        showToast('Signed in with Google!', 'success');
-      } catch (err) {
-        if (err.code !== 'auth/popup-closed-by-user')
-          showToast(friendlyError(err.code), 'error');
-      }
-    });
-
-    // ── Logout ──
-    document.getElementById('btn-logout').addEventListener('click', async () => {
-      try { await signOut(auth); showToast('Logged out.', 'info'); }
-      catch { showToast('Logout failed.', 'error'); }
-    });
-
-    // ── File select ──
-    fileInput.addEventListener('change', () => {
-      if (fileInput.files[0]) handleFileSelect(fileInput.files[0]);
-    });
-    uploadZone.addEventListener('dragover',  (e) => { e.preventDefault(); uploadZone.style.borderColor = 'var(--accent)'; });
-    uploadZone.addEventListener('dragleave', ()  => { uploadZone.style.borderColor = ''; });
-    uploadZone.addEventListener('drop', (e) => {
-      e.preventDefault(); uploadZone.style.borderColor = '';
-      if (e.dataTransfer.files[0]) handleFileSelect(e.dataTransfer.files[0]);
-    });
-
-    function handleFileSelect(file) {
-      if (!file.type.startsWith('image/')) { showToast('Please select an image file.', 'error'); return; }
-      if (file.size > 5 * 1024 * 1024)    { showToast('Image must be under 5MB.', 'error'); return; }
-      selectedFile = file;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        previewImg.src = e.target.result;
-        previewName.textContent = file.name;
-        previewSize.textContent = formatBytes(file.size);
-        previewWrap.classList.add('visible');
-        uploadZone.style.display = 'none';
+    // ── Friendly errors ──
+    function friendlyError(code) {
+      var map = {
+        'auth/invalid-email':          'Invalid email address.',
+        'auth/user-not-found':         'No account found with this email.',
+        'auth/wrong-password':         'Incorrect password.',
+        'auth/email-already-in-use':   'This email is already registered.',
+        'auth/weak-password':          'Password must be at least 6 characters.',
+        'auth/too-many-requests':      'Too many attempts. Please wait.',
+        'auth/network-request-failed': 'Network error. Check your connection.',
+        'auth/invalid-credential':     'Invalid email or password.',
+        'auth/popup-blocked':          'Popup blocked. Please allow popups for this site.',
       };
-      reader.readAsDataURL(file);
+      return map[code] || 'Something went wrong. Please try again.';
     }
 
-    document.getElementById('btn-remove-img').addEventListener('click', () => {
-      selectedFile = null;
-      previewImg.src = '';
-      previewWrap.classList.remove('visible');
-      uploadZone.style.display = '';
-      fileInput.value = '';
-    });
-
+    // ── Format bytes ──
     function formatBytes(b) {
       if (b < 1024) return b + ' B';
       if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
       return (b/1048576).toFixed(1) + ' MB';
     }
 
-    // ── Add Product ──
-    btnAdd.addEventListener('click', async () => {
-      const name  = document.getElementById('product-name').value.trim();
-      const desc  = document.getElementById('product-desc').value.trim();
-      const price = document.getElementById('product-price').value;
-
-      if (!name)                                         { showToast('Product name is required.', 'error'); return; }
-      if (!price || isNaN(price) || Number(price) <= 0) { showToast('Enter a valid price.', 'error'); return; }
-      if (!selectedFile)                                 { showToast('Please select a product image.', 'error'); return; }
-
-      btnAdd.disabled = true;
-      btnAdd.innerHTML = '<span class="spinner"></span> Saving…';
-
-      try {
-        // Resize + compress image before saving to DB (max 400px wide, quality 0.7)
-        const imageBase64 = await compressImage(selectedFile, 400, 0.7);
-
-        await push(ref(db, 'products'), {
-          name,
-          desc:  desc || '',
-          price: Number(price),
-          image: imageBase64,
-        });
-
-        // Reset form
-        document.getElementById('product-name').value  = '';
-        document.getElementById('product-desc').value  = '';
-        document.getElementById('product-price').value = '';
-        document.getElementById('btn-remove-img').click();
-        showToast('Product added successfully!', 'success');
-      } catch (err) {
-        showToast(err.message || 'Failed to add product. Try again.', 'error');
-      } finally {
-        btnAdd.disabled = false;
-        btnAdd.textContent = 'Add Product';
-      }
-    });
-
-    // ── Delete (event delegation — works for dynamic elements) ──
-    adminList.addEventListener('click', async (e) => {
-      const btn = e.target.closest('[data-delete-id]');
-      if (!btn) return;
-      try { await remove(ref(db, 'products/' + btn.dataset.deleteId)); showToast('Product deleted.', 'info'); }
-      catch { showToast('Delete failed.', 'error'); }
-    });
-
-    // ── Auth State ──
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        authCard.classList.add('hidden');
-        mgmtCard.classList.remove('hidden');
-        userDisplay.textContent = user.email || user.displayName || 'Admin';
-        startProductListener();
-      } else {
-        authCard.classList.remove('hidden');
-        mgmtCard.classList.add('hidden');
-      }
-    });
-
-    // ── Product Listener ──
-    function startProductListener() {
-      if (listenerStarted) return;
-      listenerStarted = true;
-      onValue(query(ref(db, 'products'), limitToLast(10)), (snapshot) => {
-        adminList.innerHTML = '';
-        if (!snapshot.exists()) {
-          adminList.innerHTML = '<p style="color:var(--muted);font-size:.9rem;padding:.5rem 0;">No products yet. Add your first one above!</p>';
-          return;
-        }
-        const items = [];
-        snapshot.forEach((c) => items.push({ id: c.key, ...c.val() }));
-        items.reverse().forEach((p) => {
-          const div = document.createElement('div');
-          div.className = 'admin-product-item';
-          div.innerHTML = `
-            <img class="admin-product-img" src="${esc(p.image)}" alt="${esc(p.name)}"
-                 onerror="this.src='https://placehold.co/52x52/f8f4ef/9e8e82?text=?'" />
-            <div class="admin-product-info">
-              <div class="admin-product-name">${esc(p.name)}</div>
-              ${p.desc ? `<div class="admin-product-desc">${esc(p.desc)}</div>` : ''}
-              <div class="admin-product-price">$${Number(p.price).toFixed(2)}</div>
-            </div>
-            <button class="btn btn-danger" data-delete-id="${p.id}">Delete</button>
-          `;
-          adminList.appendChild(div);
-        });
-      });
-    }
-
-    // ── Compress image using Canvas ──
+    // ── Compress image via canvas ──
     function compressImage(file, maxWidth, quality) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
+      return new Promise(function(resolve, reject) {
+        var reader = new FileReader();
         reader.onerror = reject;
-        reader.onload = (e) => {
-          const img = new Image();
+        reader.onload = function(e) {
+          var img = new Image();
           img.onerror = reject;
-          img.onload = () => {
-            // Calculate new dimensions keeping aspect ratio
-            let w = img.width;
-            let h = img.height;
+          img.onload = function() {
+            var w = img.width;
+            var h = img.height;
             if (w > maxWidth) {
-              h = Math.round((h * maxWidth) / w);
+              h = Math.round(h * maxWidth / w);
               w = maxWidth;
             }
-            // Draw on canvas and compress
-            const canvas = document.createElement('canvas');
+            var canvas = document.createElement('canvas');
             canvas.width  = w;
             canvas.height = h;
             canvas.getContext('2d').drawImage(img, 0, 0, w, h);
@@ -429,19 +277,233 @@
       });
     }
 
-    // ── Helpers ──
-    function esc(s) {
-      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    // ════════════════════════════
+    // TAB SWITCHER
+    // ════════════════════════════
+    document.getElementById('tab-login').addEventListener('click', function() {
+      document.getElementById('tab-login').classList.add('active');
+      document.getElementById('tab-signup').classList.remove('active');
+      document.getElementById('btn-login').classList.remove('hidden');
+      document.getElementById('btn-signup').classList.add('hidden');
+    });
+
+    document.getElementById('tab-signup').addEventListener('click', function() {
+      document.getElementById('tab-signup').classList.add('active');
+      document.getElementById('tab-login').classList.remove('active');
+      document.getElementById('btn-signup').classList.remove('hidden');
+      document.getElementById('btn-login').classList.add('hidden');
+    });
+
+    // ════════════════════════════
+    // LOGIN
+    // ════════════════════════════
+    document.getElementById('btn-login').addEventListener('click', function() {
+      var email = document.getElementById('auth-email').value.trim();
+      var pass  = document.getElementById('auth-password').value;
+      if (!email || !pass) { showToast('Please enter email and password.', 'error'); return; }
+      signInWithEmailAndPassword(auth, email, pass)
+        .then(function() { showToast('Logged in successfully!', 'success'); })
+        .catch(function(err) { showToast(friendlyError(err.code), 'error'); });
+    });
+
+    // ════════════════════════════
+    // SIGN UP
+    // ════════════════════════════
+    document.getElementById('btn-signup').addEventListener('click', function() {
+      var email = document.getElementById('auth-email').value.trim();
+      var pass  = document.getElementById('auth-password').value;
+      if (!email || !pass) { showToast('Please enter email and password.', 'error'); return; }
+      if (pass.length < 6) { showToast('Password must be at least 6 characters.', 'error'); return; }
+      createUserWithEmailAndPassword(auth, email, pass)
+        .then(function() { showToast('Account created! You are now logged in.', 'success'); })
+        .catch(function(err) { showToast(friendlyError(err.code), 'error'); });
+    });
+
+    // ════════════════════════════
+    // GOOGLE LOGIN
+    // ════════════════════════════
+    document.getElementById('btn-google').addEventListener('click', function() {
+      signInWithPopup(auth, provider)
+        .then(function() { showToast('Signed in with Google!', 'success'); })
+        .catch(function(err) {
+          if (err.code !== 'auth/popup-closed-by-user') {
+            showToast(friendlyError(err.code), 'error');
+          }
+        });
+    });
+
+    // ════════════════════════════
+    // LOGOUT
+    // ════════════════════════════
+    document.getElementById('btn-logout').addEventListener('click', function() {
+      signOut(auth)
+        .then(function() { showToast('Logged out.', 'info'); })
+        .catch(function() { showToast('Logout failed.', 'error'); });
+    });
+
+    // ════════════════════════════
+    // FILE SELECT & PREVIEW
+    // ════════════════════════════
+    var fileInput   = document.getElementById('product-image-file');
+    var uploadZone  = document.getElementById('upload-zone');
+    var previewWrap = document.getElementById('preview-wrap');
+    var previewImg  = document.getElementById('preview-img');
+    var previewName = document.getElementById('preview-name');
+    var previewSize = document.getElementById('preview-size');
+
+    fileInput.addEventListener('change', function() {
+      if (fileInput.files[0]) handleFileSelect(fileInput.files[0]);
+    });
+
+    uploadZone.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      uploadZone.style.borderColor = 'var(--accent)';
+    });
+    uploadZone.addEventListener('dragleave', function() {
+      uploadZone.style.borderColor = '';
+    });
+    uploadZone.addEventListener('drop', function(e) {
+      e.preventDefault();
+      uploadZone.style.borderColor = '';
+      if (e.dataTransfer.files[0]) handleFileSelect(e.dataTransfer.files[0]);
+    });
+
+    function handleFileSelect(file) {
+      if (!file.type.startsWith('image/')) {
+        showToast('Please select an image file.', 'error'); return;
+      }
+      if (file.size > 2 * 1024 * 1024) {
+        showToast('Image must be under 2MB.', 'error'); return;
+      }
+      selectedFile = file;
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        previewImg.src = e.target.result;
+        previewName.textContent = file.name;
+        previewSize.textContent = formatBytes(file.size);
+        previewWrap.classList.add('visible');
+        uploadZone.style.display = 'none';
+      };
+      reader.readAsDataURL(file);
     }
-    function friendlyError(code) {
-  return ({
-    'auth/invalid-email':          'Invalid email address.',
-    'auth/user-not-found':         'No account found with this email.',
-    'auth/wrong-password':         'Incorrect password.',
-    'auth/email-already-in-use':   'This email is already registered.',
-    'auth/weak-password':          'Password must be at least 6 characters.',
-    'auth/too-many-requests':      'Too many attempts. Please wait.',
-    'auth/network-request-failed': 'Network error. Check your connection.',
-    'auth/invalid-credential':     'Invalid credentials. Please try again.',
-  })[code] || 'An error occurred. Please try again.';
-}
+
+    document.getElementById('btn-remove-img').addEventListener('click', function() {
+      selectedFile = null;
+      previewImg.src = '';
+      previewWrap.classList.remove('visible');
+      uploadZone.style.display = '';
+      fileInput.value = '';
+    });
+
+    // ════════════════════════════
+    // ADD PRODUCT
+    // ════════════════════════════
+    document.getElementById('btn-add-product').addEventListener('click', function() {
+      var name  = document.getElementById('product-name').value.trim();
+      var desc  = document.getElementById('product-desc').value.trim();
+      var price = document.getElementById('product-price').value;
+      var btn   = document.getElementById('btn-add-product');
+
+      if (!name)                                         { showToast('Product name is required.', 'error'); return; }
+      if (!price || isNaN(price) || Number(price) <= 0) { showToast('Enter a valid price.', 'error'); return; }
+      if (!selectedFile)                                 { showToast('Please select a product image.', 'error'); return; }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Saving…';
+
+      compressImage(selectedFile, 400, 0.7)
+        .then(function(imageBase64) {
+          return push(ref(db, 'products'), {
+            name:  name,
+            desc:  desc || '',
+            price: Number(price),
+            image: imageBase64,
+          });
+        })
+        .then(function() {
+          document.getElementById('product-name').value  = '';
+          document.getElementById('product-desc').value  = '';
+          document.getElementById('product-price').value = '';
+          document.getElementById('btn-remove-img').click();
+          showToast('Product added successfully!', 'success');
+        })
+        .catch(function(err) {
+          showToast(err.message || 'Failed. Try again.', 'error');
+        })
+        .finally(function() {
+          btn.disabled = false;
+          btn.textContent = 'Add Product';
+        });
+    });
+
+    // ════════════════════════════
+    // DELETE (event delegation)
+    // ════════════════════════════
+    document.getElementById('admin-product-list').addEventListener('click', function(e) {
+      var btn = e.target.closest('[data-delete-id]');
+      if (!btn) return;
+      remove(ref(db, 'products/' + btn.dataset.deleteId))
+        .then(function()  { showToast('Product deleted.', 'info'); })
+        .catch(function() { showToast('Delete failed.', 'error'); });
+    });
+
+    // ════════════════════════════
+    // AUTH STATE
+    // ════════════════════════════
+    onAuthStateChanged(auth, function(user) {
+      var authCard = document.getElementById('auth-card');
+      var mgmtCard = document.getElementById('management-card');
+      if (user) {
+        authCard.classList.add('hidden');
+        mgmtCard.classList.remove('hidden');
+        document.getElementById('user-email-display').textContent =
+          user.email || user.displayName || 'Admin';
+        startProductListener();
+      } else {
+        authCard.classList.remove('hidden');
+        mgmtCard.classList.add('hidden');
+      }
+    });
+
+    // ════════════════════════════
+    // PRODUCT LISTENER
+    // ════════════════════════════
+    function startProductListener() {
+      if (listenerStarted) return;
+      listenerStarted = true;
+
+      var q = query(ref(db, 'products'), limitToLast(10));
+      onValue(q, function(snapshot) {
+        var list = document.getElementById('admin-product-list');
+        list.innerHTML = '';
+
+        if (!snapshot.exists()) {
+          list.innerHTML = '<p style="color:var(--muted);font-size:.9rem;padding:.5rem 0;">No products yet. Add your first one above!</p>';
+          return;
+        }
+
+        var items = [];
+        snapshot.forEach(function(child) {
+          items.push(Object.assign({ id: child.key }, child.val()));
+        });
+        items.reverse();
+
+        items.forEach(function(p) {
+          var div = document.createElement('div');
+          div.className = 'admin-product-item';
+          div.innerHTML =
+            '<img class="admin-product-img" src="' + esc(p.image) + '" alt="' + esc(p.name) + '" onerror="this.src=\'https://placehold.co/52x52/f8f4ef/9e8e82?text=?\'" />' +
+            '<div class="admin-product-info">' +
+              '<div class="admin-product-name">' + esc(p.name) + '</div>' +
+              (p.desc ? '<div class="admin-product-desc">' + esc(p.desc) + '</div>' : '') +
+              '<div class="admin-product-price">$' + Number(p.price).toFixed(2) + '</div>' +
+            '</div>' +
+            '<button class="btn btn-danger" data-delete-id="' + p.id + '">Delete</button>';
+          list.appendChild(div);
+        });
+      });
+    }
+
+  </script>
+</body>
+</html>
